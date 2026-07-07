@@ -1,15 +1,18 @@
 import { NextResponse } from "next/server";
-import { jwtVerify } from "jose";
+import { getToken } from "next-auth/jwt";
 
-const SECRET_KEY = process.env.JWT_SECRET || "fallback_super_secret_session_key_with_at_least_32_characters_for_hmac";
-const KEY = new TextEncoder().encode(SECRET_KEY);
+const SECRET = process.env.NEXTAUTH_SECRET || "fallback_secret_for_nextauth_development_32_chars_long";
 
 /**
  * Next.js 16 Proxy function (replacing deprecated middleware)
+ * Uses NextAuth getToken to inspect JWT session token.
  * @param {Request} request 
  */
 export async function proxy(request) {
-  const token = request.cookies.get("token")?.value;
+  const token = await getToken({
+    req: request,
+    secret: SECRET,
+  });
   const { pathname } = request.nextUrl;
 
   // Protect the dashboard routes
@@ -17,27 +20,12 @@ export async function proxy(request) {
     if (!token) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
-
-    try {
-      await jwtVerify(token, KEY);
-      return NextResponse.next();
-    } catch (error) {
-      console.warn("Invalid token detected in proxy, redirecting to login:", error.message);
-      const response = NextResponse.redirect(new URL("/login", request.url));
-      response.cookies.delete("token");
-      return response;
-    }
   }
 
   // Redirect logged-in users trying to access login page to dashboard
   if (pathname === "/login") {
     if (token) {
-      try {
-        await jwtVerify(token, KEY);
-        return NextResponse.redirect(new URL("/dashboard", request.url));
-      } catch (error) {
-        // Token is invalid/expired, let them view the login page
-      }
+      return NextResponse.redirect(new URL("/dashboard", request.url));
     }
   }
 

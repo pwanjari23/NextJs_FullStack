@@ -1,10 +1,42 @@
 "use client";
 
-import { useActionState } from "react";
-import { loginAction } from "./actions";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [state, formAction, isPending] = useActionState(loginAction, null);
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [isPending, setIsPending] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError(null);
+    setIsPending(true);
+
+    try {
+      // Trigger NextAuth credentials sign-in
+      const res = await signIn("credentials", {
+        username,
+        password,
+        redirect: false,
+      });
+
+      if (res?.error) {
+        setError("Invalid username or password.");
+      } else {
+        router.push("/dashboard");
+        router.refresh(); // Refresh page to update layout header session state
+      }
+    } catch (err) {
+      console.error(err);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setIsPending(false);
+    }
+  };
 
   return (
     <div className="relative min-h-[calc(100vh-130px)] flex items-center justify-center p-6 overflow-hidden">
@@ -27,7 +59,7 @@ export default function LoginPage() {
           </div>
 
           {/* Form */}
-          <form action={formAction} className="flex flex-col gap-5">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* Username Input */}
             <div className="flex flex-col gap-1.5">
               <label htmlFor="username" className="text-xs font-mono text-zinc-500 uppercase tracking-wider">
@@ -38,6 +70,8 @@ export default function LoginPage() {
                 name="username"
                 type="text"
                 required
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 placeholder="Enter username"
                 className="px-4 py-3 bg-zinc-950/60 border border-zinc-800 rounded-xl text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-purple-500/80 focus:ring-1 focus:ring-purple-500/30 transition-all font-mono"
               />
@@ -53,13 +87,15 @@ export default function LoginPage() {
                 name="password"
                 type="password"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
                 className="px-4 py-3 bg-zinc-950/60 border border-zinc-800 rounded-xl text-sm text-white placeholder-zinc-600 focus:outline-none focus:border-purple-500/80 focus:ring-1 focus:ring-purple-500/30 transition-all font-mono"
               />
             </div>
 
             {/* Error Message */}
-            {state?.error && (
+            {error && (
               <div className="p-3.5 bg-red-500/10 border border-red-500/20 text-red-400 text-xs rounded-xl flex items-center gap-2">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -71,7 +107,7 @@ export default function LoginPage() {
                 >
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
                 </svg>
-                <span>{state.error}</span>
+                <span>{error}</span>
               </div>
             )}
 

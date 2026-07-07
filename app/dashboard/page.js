@@ -1,32 +1,23 @@
-import { cookies } from "next/headers";
-import { decrypt } from "@/lib/auth";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/authOptions";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import LogoutButton from "@/app/components/LogoutButton";
 
 export default async function DashboardPage() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get("token")?.value;
-  const user = await decrypt(token);
+  const session = await getServerSession(authOptions);
 
-  // If somehow token is invalid, redirect to login
-  if (!user) {
+  // Secure route protection
+  if (!session || !session.user) {
     redirect("/login");
   }
 
-  // Inline server action to handle logout
-  async function logoutAction() {
-    "use server";
-    const cookieStore = await cookies();
-    cookieStore.delete("token");
-    redirect("/login");
-  }
-
-  // Mock statistics for a premium dashboard feel
+  // Mock stats for dashboard branding
   const stats = [
     { label: "Products Catalog", value: "30 items", desc: "Synced from DummyJSON", icon: "📦" },
-    { label: "Security Level", value: "Stateless JWT", desc: "Signed with HS256", icon: "🛡️" },
-    { label: "Session Expiry", value: "2 hours", desc: "HTTP-Only secure cookie", icon: "⏱️" },
-    { label: "Current Identity", value: user.username, desc: `Role: ${user.role || "User"}`, icon: "👤" },
+    { label: "Security Level", value: "NextAuth JWT", desc: "Secured with secret key", icon: "🛡️" },
+    { label: "Session Provider", value: "Credentials", desc: "Propagated via Provider", icon: "⏱️" },
+    { label: "Current Identity", value: session.user.name || session.user.email, desc: `Role: ${session.user.role || "User"}`, icon: "👤" },
   ];
 
   return (
@@ -48,25 +39,20 @@ export default async function DashboardPage() {
           <div>
             <span className="text-xs uppercase tracking-widest text-purple-500 font-semibold">Protected Area</span>
             <h1 className="text-3xl font-extrabold mt-1 text-white">
-              Welcome back, <span className="text-purple-400 capitalize">{user.username}</span>
+              Welcome back, <span className="text-purple-400 capitalize">{session.user.name || "User"}</span>
             </h1>
             <p className="text-zinc-400 text-sm mt-1">
-              Here is your secure session snapshot and dashboard control panel.
+              Here is your secure session snapshot and dashboard control panel powered by NextAuth.js.
             </p>
           </div>
           
-          {/* Logout Action */}
-          <form action={logoutAction} className="flex-shrink-0">
-            <button
-              type="submit"
-              className="px-5 py-2.5 bg-red-600/10 border border-red-500/20 text-red-400 text-xs font-bold rounded-xl hover:bg-red-600/20 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-              </svg>
-              Sign Out
-            </button>
-          </form>
+          {/* Logout Action using custom client component */}
+          <div className="flex-shrink-0 bg-red-600/10 border border-red-500/20 px-5 py-2.5 rounded-xl hover:bg-red-600/20 active:scale-95 transition-all flex items-center gap-1.5">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 text-red-400">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+            </svg>
+            <LogoutButton />
+          </div>
         </div>
 
         {/* Stats Grid */}
@@ -101,17 +87,17 @@ export default async function DashboardPage() {
           <div className="relative bg-zinc-900/60 border border-zinc-900 rounded-3xl p-8 backdrop-blur-xl">
             <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
-              Secured Session Details
+              Decrypted NextAuth Session Object
             </h3>
             <div className="flex flex-col gap-4 font-mono text-xs text-zinc-400">
               <div className="p-4 bg-zinc-950/80 border border-zinc-900 rounded-xl overflow-x-auto">
-                <p className="text-zinc-500 mb-2">// Active JWT Decrypted Payload</p>
-                <pre className="text-purple-400">{JSON.stringify(user, null, 2)}</pre>
+                <p className="text-zinc-500 mb-2">// Server-side Session State</p>
+                <pre className="text-purple-400">{JSON.stringify(session, null, 2)}</pre>
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-zinc-500 pt-2 text-[11px]">
                 <span>Status: Authenticated</span>
-                <span>Algorithm: HS256 HMAC</span>
-                <span>Expires: {new Date(user.expiresAt).toLocaleTimeString()}</span>
+                <span>Type: credentials</span>
+                <span>Role Callback: {session.user.role || "admin"}</span>
               </div>
             </div>
           </div>
