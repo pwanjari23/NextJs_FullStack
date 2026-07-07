@@ -27,8 +27,15 @@ export default function RootLayout({ children }) {
         
         {/* Global Header */}
         <header className="border-b border-zinc-900 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="text-lg font-bold tracking-wider hover:text-purple-400 transition-colors">
-            PRODUCTS STORE
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <img
+              src="/logo.png"
+              alt="Products Store Logo"
+              className="w-8 h-8 rounded-lg object-cover border border-zinc-800 group-hover:border-purple-500/50 transition-colors"
+            />
+            <span className="text-lg font-bold tracking-wider hover:text-purple-400 transition-colors group-hover:text-purple-400">
+              PRODUCTS STORE
+            </span>
           </Link>
           <nav className="flex items-center gap-6">
             <Link href="/" className="text-sm text-zinc-400 hover:text-white transition-colors">
