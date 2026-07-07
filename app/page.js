@@ -47,11 +47,6 @@ export default function Home() {
           </Link>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="absolute bottom-6 text-xs text-zinc-600 font-mono tracking-widest uppercase">
-        © 2026 products store corp
-      </footer>
     </div>
   );
 }

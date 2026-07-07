@@ -10,17 +10,7 @@ export default function ProductsPage() {
   }));
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white font-sans selection:bg-purple-500 selection:text-white pb-24">
-      {/* Top Navbar/Header */}
-      <header className="border-b border-zinc-900 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-lg font-bold tracking-wider hover:text-purple-400 transition-colors">
-          PRODUCTS STORE
-        </Link>
-        <Link href="/" className="text-sm text-zinc-400 hover:text-white transition-colors flex items-center gap-1">
-          <span>← Back to Home</span>
-        </Link>
-      </header>
-
+    <div className="pb-24">
       {/* Main Container */}
       <main className="max-w-7xl mx-auto px-6 pt-16">
         {/* Page Header */}

@@ -4,19 +4,9 @@ export default async function ProductDetailPage({ params }) {
   const { id } = await params;
 
   return (
-    <div className="relative min-h-screen flex flex-col justify-between bg-zinc-950 text-white font-sans overflow-hidden">
+    <div className="relative flex-grow flex flex-col justify-center py-16 overflow-hidden">
       {/* Background glowing blob */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
-
-      {/* Top Navbar */}
-      <header className="border-b border-zinc-900 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50 px-6 py-4 flex items-center justify-between">
-        <Link href="/" className="text-lg font-bold tracking-wider hover:text-purple-400 transition-colors">
-          PRODUCTS STORE
-        </Link>
-        <Link href="/products" className="text-sm text-zinc-400 hover:text-white transition-colors flex items-center gap-1">
-          <span>← Back to Catalog</span>
-        </Link>
-      </header>
 
       {/* Main Content Area */}
       <main className="flex-1 flex flex-col items-center justify-center p-6 relative z-10">
@@ -49,6 +39,8 @@ export default async function ProductDetailPage({ params }) {
               Product <span className="font-mono text-purple-400 font-semibold bg-purple-500/5 px-1.5 py-0.5 rounded border border-purple-500/10">{id}</span> details page — content coming soon!
             </p>
 
+            {/* Simulated Action / Coming Soon info */}
+            
           </div>
         </div>
 
@@ -62,11 +54,6 @@ export default async function ProductDetailPage({ params }) {
           </Link>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="w-full text-center py-6 text-xs text-zinc-700 border-t border-zinc-900/60 font-mono tracking-widest uppercase">
-        © 2026 products store corp
-      </footer>
     </div>
   );
 }
