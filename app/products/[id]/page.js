@@ -61,7 +61,19 @@ export default async function ProductDetailPage({ params }) {
           {/* Framed static message required by prompt */}
           <div className="relative group w-full">
             <div className="absolute -inset-0.5 bg-gradient-to-r from-purple-600 to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-500"></div>
-            <div className="relative bg-zinc-900/90 border border-zinc-800 rounded-2xl p-6 text-center shadow-lg backdrop-blur-xl">
+            <div className="relative bg-zinc-900/90 border border-zinc-800 rounded-2xl p-6 text-center shadow-lg backdrop-blur-xl flex flex-col items-center gap-4">
+              {/* Static product image from public directory */}
+              <div className="w-full h-32 relative rounded-xl overflow-hidden bg-zinc-950 border border-zinc-800/50 flex items-center justify-center">
+                <img
+                  src="/placeholder-product.png"
+                  alt="Static Product Preview"
+                  className="object-cover w-full h-full opacity-60 group-hover:opacity-80 transition-opacity duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent"></div>
+                <span className="absolute bottom-2 right-3 text-[9px] font-mono text-zinc-500 uppercase tracking-widest bg-zinc-900/80 px-2 py-0.5 rounded border border-zinc-800/40">
+                  Static Asset
+                </span>
+              </div>
               <p className="text-zinc-400 text-xs font-light">
                 Product <span className="font-mono text-purple-400 font-semibold bg-purple-500/10 px-1 py-0.5 rounded border border-purple-500/20">{id}</span> details page — content coming soon!
               </p>
