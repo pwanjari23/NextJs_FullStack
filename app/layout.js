@@ -35,7 +35,7 @@ export default function RootLayout({ children }) {
               Home
             </Link>
             <Link href="/products" className="text-sm text-zinc-400 hover:text-white transition-colors">
-              Catalog
+              Products
             </Link>
           </nav>
         </header>
