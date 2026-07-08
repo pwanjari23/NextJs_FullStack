@@ -15,17 +15,19 @@ export async function proxy(request) {
   });
   const { pathname } = request.nextUrl;
 
-  // Protect the dashboard routes
-  if (pathname.startsWith("/dashboard")) {
+  // Protect the dashboard and products routes
+  if (pathname.startsWith("/dashboard") || pathname.startsWith("/products")) {
     if (!token) {
-      return NextResponse.redirect(new URL("/login", request.url));
+      const url = new URL("/login", request.url);
+      url.searchParams.set("callbackUrl", pathname);
+      return NextResponse.redirect(url);
     }
   }
 
-  // Redirect logged-in users trying to access login page to dashboard
+  // Redirect logged-in users trying to access login page to products
   if (pathname === "/login") {
     if (token) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      return NextResponse.redirect(new URL("/products", request.url));
     }
   }
 
@@ -34,5 +36,5 @@ export async function proxy(request) {
 
 // Config to specify matching paths
 export const config = {
-  matcher: ["/dashboard/:path*", "/login"],
+  matcher: ["/dashboard/:path*", "/products/:path*", "/login"],
 };

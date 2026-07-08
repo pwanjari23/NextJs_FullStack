@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -27,7 +28,8 @@ export default function LoginPage() {
       if (res?.error) {
         setError("Invalid username or password.");
       } else {
-        router.push("/dashboard");
+        const callbackUrl = searchParams.get("callbackUrl") || "/products";
+        router.push(callbackUrl);
         router.refresh(); // Refresh page to update layout header session state
       }
     } catch (err) {
@@ -144,5 +146,17 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={
+      <div className="relative min-h-[calc(100vh-130px)] flex items-center justify-center p-6 text-zinc-400">
+        Loading...
+      </div>
+    }>
+      <LoginForm />
+    </Suspense>
   );
 }
