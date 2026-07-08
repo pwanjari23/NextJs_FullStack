@@ -1,5 +1,10 @@
 import Link from "next/link";
 
+export const metadata = {
+  title: "This is Homepage",
+  description: "Welcome to our premium products store homepage",
+};
+
 export default function Home() {
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center bg-radial from-slate-900 via-zinc-950 to-black text-white overflow-hidden px-4">
