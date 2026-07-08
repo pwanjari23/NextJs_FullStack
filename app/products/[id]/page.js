@@ -1,6 +1,25 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  try {
+    const res = await fetch(`https://dummyjson.com/products/${id}`);
+    if (res.ok) {
+      const product = await res.json();
+      return {
+        title: `${product.title} - Products Store`,
+        description: product.description || `Details for ${product.title}`,
+      };
+    }
+  } catch (err) {
+    console.error(err);
+  }
+  return {
+    title: "Product Details - Products Store",
+  };
+}
+
 export default async function ProductDetailPage({ params }) {
   const { id } = await params;
   let product = null;

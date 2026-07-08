@@ -1,5 +1,10 @@
 import Link from "next/link";
 
+export const metadata = {
+  title: "Products Store - Products List",
+  description: "A list of our premium products",
+};
+
 export default async function ProductsPage() {
   let products = [];
   let errorMsg = null;
